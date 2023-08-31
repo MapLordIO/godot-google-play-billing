@@ -4,8 +4,8 @@
     <application>
 
         <meta-data
-            android:name="org.godotengine.plugin.v1.GodotGooglePlayBilling"
-            android:value="org.godotengine.godot.plugin.googleplaybilling.GodotGooglePlayBilling" />
+            android:name="org.godotengine.plugin.v1.GooglePlayBilling"
+            android:value="org.godotengine.godot.plugin.googleplaybilling.GooglePlayBillingPlugin" />
 
     </application>
 </manifest>
