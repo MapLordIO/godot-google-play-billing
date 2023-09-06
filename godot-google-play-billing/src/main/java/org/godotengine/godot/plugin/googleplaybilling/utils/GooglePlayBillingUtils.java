@@ -35,7 +35,6 @@ import org.godotengine.godot.Dictionary;
 import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.ProductDetails;
 import com.android.billingclient.api.Purchase;
-import com.android.billingclient.api.SkuDetails;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,6 +68,7 @@ public class GooglePlayBillingUtils {
 	public static Dictionary convertSubscriptionOfferDetailsToDictionary(ProductDetails.SubscriptionOfferDetails subscriptionOfferDetails) {
 		Dictionary dictionary = new Dictionary();
 		dictionary.put("offer_id", subscriptionOfferDetails.getOfferId());
+		dictionary.put("offer_token", subscriptionOfferDetails.getOfferToken());
 		dictionary.put("base_plan_id", subscriptionOfferDetails.getBasePlanId());
 		dictionary.put("offer_tags", subscriptionOfferDetails.getOfferTags().toArray());
 

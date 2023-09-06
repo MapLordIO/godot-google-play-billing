@@ -40,13 +40,12 @@ public class PurchasesHelper implements PurchasesUpdatedListener {
     public void onPurchasesUpdated(@NonNull BillingResult billingResult, @Nullable List<Purchase> purchases) {
         if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK
                 && purchases != null) {
-            GooglePlayBillingPlugin.getInstance().emitSignal(
+            GooglePlayBillingPlugin.getInstance().emitPluginSignal(
                     "purchases_updated",
-                    BillingClient.BillingResponseCode.OK,
-                    GooglePlayBillingUtils.convertPurchaseListToDictionaryObjectArray(purchases)
+                    (Object) GooglePlayBillingUtils.convertPurchaseListToDictionaryObjectArray(purchases)
             );
         } else {
-            GooglePlayBillingPlugin.getInstance().emitSignal(
+            GooglePlayBillingPlugin.getInstance().emitPluginSignal(
                     "purchases_error",
                     billingResult.getResponseCode(),
                     billingResult.getDebugMessage()
@@ -145,10 +144,10 @@ public class PurchasesHelper implements PurchasesUpdatedListener {
 
         ConsumeResponseListener consumeResponseListener = (billingResult, token) -> {
             if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
-                GooglePlayBillingPlugin.getInstance().emitSignal("consumed", token);
+                GooglePlayBillingPlugin.getInstance().emitPluginSignal("consumed", token);
             } else {
-                GooglePlayBillingPlugin.getInstance().emitSignal(
-                        "consumed",
+                GooglePlayBillingPlugin.getInstance().emitPluginSignal(
+                        "consumption_error",
                         token,
                         billingResult.getResponseCode(),
                         billingResult.getDebugMessage()
@@ -167,9 +166,9 @@ public class PurchasesHelper implements PurchasesUpdatedListener {
 
         AcknowledgePurchaseResponseListener acknowledgePurchaseResponseListener = billingResult -> {
             if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
-                GooglePlayBillingPlugin.getInstance().emitSignal("acknowledged", purchaseToken);
+                GooglePlayBillingPlugin.getInstance().emitPluginSignal("acknowledged", purchaseToken);
             } else {
-                GooglePlayBillingPlugin.getInstance().emitSignal(
+                GooglePlayBillingPlugin.getInstance().emitPluginSignal(
                         "acknowledgement_error",
                         purchaseToken,
                         billingResult.getResponseCode(),

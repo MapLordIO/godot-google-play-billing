@@ -3,7 +3,9 @@ package org.godotengine.godot.plugin.googleplaybilling;
 import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.ProductDetails;
 import com.android.billingclient.api.ProductDetailsResponseListener;
+import com.android.billingclient.api.PurchasesResponseListener;
 import com.android.billingclient.api.QueryProductDetailsParams;
+import com.android.billingclient.api.QueryPurchasesParams;
 
 import org.godotengine.godot.Godot;
 import org.godotengine.godot.plugin.googleplaybilling.helpers.BillingClientHelper;
@@ -13,6 +15,7 @@ import org.godotengine.godot.plugin.googleplaybilling.utils.GooglePlayBillingUti
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 public class GooglePlayBilling {
     public static final int MAX_RETRIES_COUNT = 3;
@@ -40,8 +43,6 @@ public class GooglePlayBilling {
                 .enablePendingPurchases()
                 .setListener(this.purchasesHelper)
                 .build();
-
-        this.billingClientHelper.startConnection();
     }
 
     public void queryProductDetails(List<QueryProductDetailsParams.Product> products) {
@@ -54,13 +55,13 @@ public class GooglePlayBilling {
             if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
                 productDetailsList.forEach(productDetails -> this.loadedProductDetails.put(productDetails.getProductId(), productDetails));
 
-                GooglePlayBillingPlugin.getInstance().emitSignal(
+               GooglePlayBillingPlugin.getInstance().emitPluginSignal(
                         "queried_products",
-                        GooglePlayBillingUtils.convertProductDetailsListToDictionaryObjectArray(productDetailsList)
+                       (Object) GooglePlayBillingUtils.convertProductDetailsListToDictionaryObjectArray(productDetailsList)
                 );
             } else {
-                GooglePlayBillingPlugin.getInstance().emitSignal(
-                        "query_products_error",
+                GooglePlayBillingPlugin.getInstance().emitPluginSignal(
+                        "queried_products_error",
                         billingResult.getResponseCode(),
                         billingResult.getDebugMessage()
                 );
@@ -68,6 +69,32 @@ public class GooglePlayBilling {
         };
 
         this.billingClient.queryProductDetailsAsync(queryProductDetailsParams, productDetailsResponseListener);
+    }
+
+    public void queryPurchases(String productType) {
+        QueryPurchasesParams queryPurchasesParams;
+
+        PurchasesResponseListener purchasesQueryListener = (billingResult, list) -> {
+            if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
+                GooglePlayBillingPlugin.getInstance().emitPluginSignal(
+                        "queried_purchases",
+                        productType,
+                        (Object) GooglePlayBillingUtils.convertPurchaseListToDictionaryObjectArray(list)
+                );
+            } else {
+                GooglePlayBillingPlugin.getInstance().emitPluginSignal(
+                        "queried_purchases_error",
+                        productType,
+                        billingResult.getResponseCode(),
+                        billingResult.getDebugMessage()
+                );
+            }
+        };
+
+        queryPurchasesParams = QueryPurchasesParams.newBuilder()
+                .setProductType(productType)
+                .build();
+        this.billingClient.queryPurchasesAsync(queryPurchasesParams, purchasesQueryListener);
     }
 
     public BillingClientHelper getBillingClientHelper() {
@@ -80,6 +107,10 @@ public class GooglePlayBilling {
 
     public ProductDetails getLoadedProductDetails(String productId) {
         return loadedProductDetails.get(productId);
+    }
+
+    public void setAutoRetryEnable(boolean autoRetryEnable) {
+        this.autoRetryEnable = autoRetryEnable;
     }
 
     public boolean isAutoRetryEnabled() {
