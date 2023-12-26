@@ -5,15 +5,10 @@ import androidx.annotation.NonNull;
 import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.BillingClientStateListener;
 import com.android.billingclient.api.BillingResult;
-import com.android.billingclient.api.PurchasesResponseListener;
-import com.android.billingclient.api.QueryPurchasesParams;
 
 import org.godotengine.godot.Godot;
 import org.godotengine.godot.plugin.googleplaybilling.GooglePlayBilling;
 import org.godotengine.godot.plugin.googleplaybilling.GooglePlayBillingPlugin;
-import org.godotengine.godot.plugin.googleplaybilling.utils.GooglePlayBillingUtils;
-
-import java.util.stream.Stream;
 
 public class BillingClientHelper implements BillingClientStateListener {
     private final GooglePlayBilling googlePlayBilling;

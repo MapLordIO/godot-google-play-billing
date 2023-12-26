@@ -15,7 +15,6 @@ import org.godotengine.godot.plugin.googleplaybilling.utils.GooglePlayBillingUti
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Stream;
 
 public class GooglePlayBilling {
     public static final int MAX_RETRIES_COUNT = 3;
@@ -37,9 +36,9 @@ public class GooglePlayBilling {
         this.billingClientHelper = new BillingClientHelper(this, this.godot);
         this.purchasesHelper = new PurchasesHelper(this, this.godot);
 
-        Objects.requireNonNull(this.godot.getContext());
+        Objects.requireNonNull(this.godot.getActivity().getApplicationContext());
 
-        this.billingClient = BillingClient.newBuilder(this.godot.getContext())
+        this.billingClient = BillingClient.newBuilder(this.godot.getActivity().getApplicationContext())
                 .enablePendingPurchases()
                 .setListener(this.purchasesHelper)
                 .build();

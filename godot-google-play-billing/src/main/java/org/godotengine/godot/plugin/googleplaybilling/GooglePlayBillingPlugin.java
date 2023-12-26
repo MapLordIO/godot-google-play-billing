@@ -57,8 +57,6 @@ public class GooglePlayBillingPlugin extends GodotPlugin {
 
 		instance = this;
 
-		this.emitPluginSignal("connected");
-
 		this.googlePlayBilling = new GooglePlayBilling(this, this.getGodot());
 	}
 
